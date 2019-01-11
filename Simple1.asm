@@ -11,11 +11,15 @@ start
 	movwf	TRISD, ACCESS
 	movlw 	0x0
 	movwf	TRISC, ACCESS	    ; Port C all outputs
+	movf	PORTD, W, ACCESS
+	xorwf	0x0A, 1
+	movlw	0x0
 	bra 	test
 loop	movff 	0x06, PORTC
 	incf 	0x06, W, ACCESS
 test	movwf	0x06, ACCESS	    ; Test for end of loop condition
-	movf	PORTD, W, ACCESS
+	;movlw	0x63	
+	movf	0x0A, W, ACCESS
 	cpfsgt 	0x06, ACCESS
 	bra 	loop		    ; Not yet finished goto start of loop again
 	goto 	0x0		    ; Re-run program from start
