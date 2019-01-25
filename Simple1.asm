@@ -20,8 +20,7 @@ myTable data	    "Hello World!\n"	; message, plus carriage return
 	constant    myTable_l=.13	; length of data
 	
 main	code
-	call	clear_display
-	; ******* Programme FLASH read Setup Code ***********************
+	; *******  Programme FLASH read Setup Code ***********************
 setup	bcf	EECON1, CFGS	; point to Flash program memory  
 	bsf	EECON1, EEPGD 	; access Flash program memory
 	call	UART_Setup	; setup UART
@@ -50,7 +49,10 @@ loop 	tblrd*+			; one byte from PM to TABLAT, increment TBLPRT
 	movlw	myTable_l	; output message to UART
 	lfsr	FSR2, myArray
 	call	UART_Transmit_Message
-
+	
+	call	MyDelay
+	call	clear_display
+	
 	goto	$		; goto current line in code
 
 	; a delay subroutine if you need one, times around loop in delay_count
@@ -60,8 +62,35 @@ delay	decfsz	delay_count	; decrement until zero
 
 	
 clear_display
-	movlw	b'00000000'
+	movlw	b'00000001'
 	call	LCD_Send_Byte_I
+	return
+	
+
+MyDelay ; Delay
+	movlw	0x10
+	movwf	0x20
+	call	PrimaryDelay
+	
+PrimaryDelay
+	dcfsnz	0x20
+	return
+	movlw	0xff
+	movwf	0x22
+	call	SecondaryDelay
+	bra	PrimaryDelay
+	
+SecondaryDelay
+	dcfsnz	0x22
+	return
+	movlw	0xff
+	movwf	0x24
+	call	ThirdaryDelay
+	bra	SecondaryDelay
+	
+ThirdaryDelay
+	decfsz	0x24
+	bra	ThirdaryDelay
 	return
 	
 	end
