@@ -6,6 +6,10 @@
 	extern	KBD_Ch_Setup, Read_Columns, Read_Rows, Test_Ascii
 	extern	LCD_Write_Hex			    ; external LCD subroutines
 	extern  ADC_Setup, ADC_Read		    ; external ADC routines
+	extern	Test_Mul_8_16
+	extern	Test_Mul_16_16
+	extern	Test_Mul_8_24
+	extern	Convert_hex_dec, Test_convert
 	
 acs0	udata_acs   ; reserve data space in access ram
 counter	    res 1   ; reserve one byte for a counter variable
@@ -15,7 +19,7 @@ tables	udata	0x400    ; reserve data anywhere in RAM (here at 0x400)
 myArray res 0x80    ; reserve 128 bytes for message data
 
 rst	code	0    ; reset vector
-	goto	KBD_main
+	goto	setup
 
 pdata	code    ; a section of programme memory for storing data
 	; ******* myTable, data in programme memory, and its length *****
@@ -29,7 +33,7 @@ setup	bcf	EECON1, CFGS	; point to Flash program memory
 	call	UART_Setup	; setup UART
 	call	LCD_Setup	; setup LCD
 	call	ADC_Setup	; setup ADC
-	goto	start
+	goto	measure_loop_in_dec
 	
 	; ******* Main programme ****************************************
 start 	lfsr	FSR0, myArray	; Load FSR0 with address in RAM	
@@ -56,11 +60,28 @@ loop 	tblrd*+			; one byte from PM to TABLAT, increment TBLPRT
 	
 measure_loop
 	call	ADC_Read
+	call	MyDelay
 	movf	ADRESH,W
 	call	LCD_Write_Hex
 	movf	ADRESL,W
 	call	LCD_Write_Hex
+	call	MyDelay
+	call	clear_display
 	goto	measure_loop		; goto current line in code
+
+measure_loop_in_dec
+	call	ADC_Read
+	call	MyDelay
+	movff	ADRESH, 0x3f
+	movff	ADRESL, 0x40
+	call	Convert_hex_dec
+	movf	0x49, W
+	call	LCD_Write_Hex
+	movf	0x4a, W
+	call	LCD_Write_Hex
+	call	MyDelay
+	call	clear_display
+	goto	measure_loop_in_dec	; goto current line in code
 
 	; a delay subroutine if you need one, times around loop in delay_count
 delay	decfsz	delay_count	; decrement until zero
@@ -75,9 +96,10 @@ clear_display
 	
 
 MyDelay ; Delay
-	movlw	0x10
+	movlw	0x3f
 	movwf	0x20
 	call	PrimaryDelay
+	return
 	
 PrimaryDelay
 	dcfsnz	0x20
