@@ -2,6 +2,7 @@
 
     global  LCD_Setup, LCD_Write_Message, LCD_Send_Byte_I, LCD_delay_x4us
     global  LCD_Send_Byte_D
+    global  LCD_Write_Hex, LCD_delay_ms
 
 acs0    udata_acs   ; named variables in access ram
 LCD_cnt_l   res 1   ; reserve 1 byte for variable LCD_cnt_l
