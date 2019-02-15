@@ -3,7 +3,7 @@
 	extern	UART_Setup, UART_Transmit_Message   ; external UART subroutines
 	extern  LCD_Setup, LCD_Write_Message	    ; external LCD subroutines
 	extern	LCD_Send_Byte_I, LCD_Send_Byte_D
-	extern	KBD_Ch_Setup, Read_Columns, Read_Rows, Test_Ascii
+	extern	KBD_Ch_Setup, Read_Columns, Read_Rows, Convert_Ascii
 	extern	LCD_Write_Hex			    ; external LCD subroutines
 	extern  ADC_Setup, ADC_Read		    ; external ADC routines
 	extern	Test_Mul_8_16
@@ -19,7 +19,7 @@ tables	udata	0x400    ; reserve data anywhere in RAM (here at 0x400)
 myArray res 0x80    ; reserve 128 bytes for message data
 
 rst	code	0    ; reset vector
-	goto	setup
+	goto	KBD_main
 
 pdata	code    ; a section of programme memory for storing data
 	; ******* myTable, data in programme memory, and its length *****
@@ -129,7 +129,8 @@ ShiftLine
 
 KBD_main
 	call	KBD_Ch_Setup
-	call	Test_Ascii
+	call	Read_Columns
+	call	Convert_Ascii
 	goto	setup2
 
 	
