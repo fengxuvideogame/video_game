@@ -32,8 +32,7 @@ LED_Array_update
     call    LED_generate ;new input for port E, expect W to be xxxx0000
     xorwf   PORTE,1,0 ; xor W to port E, saved in port E
     return
-    
-    
+       
     
     
 
