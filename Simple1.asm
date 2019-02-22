@@ -10,6 +10,8 @@
 	extern	Test_Mul_16_16
 	extern	Test_Mul_8_24
 	extern	Convert_hex_dec, Test_convert
+	extern	SPI_Mp3Init,SPI_Mp3Transmit
+	
 	
 acs0	udata_acs   ; reserve data space in access ram
 counter	    res 1   ; reserve one byte for a counter variable
@@ -18,8 +20,12 @@ delay_count res 1   ; reserve one byte for counter in the delay routine
 tables	udata	0x400    ; reserve data anywhere in RAM (here at 0x400)
 myArray res 0x80    ; reserve 128 bytes for message data
 
-rst	code	0    ; reset vector
-	goto	KBD_main
+rst	code	    ; reset vector
+	call	SPI_Mp3Init
+	goto	SPI_Mp3Transmit
+	goto	$
+	
+
 
 pdata	code    ; a section of programme memory for storing data
 	; ******* myTable, data in programme memory, and its length *****
