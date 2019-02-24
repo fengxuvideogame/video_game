@@ -1,6 +1,6 @@
 #include p18f87k22.inc
     
-    global	kpd_ch_setup, kpd_read
+    global	kpd_ch_setup, kpd_read, read_columns
     extern	delay_x4us
    
 acs0	udata_acs
@@ -24,11 +24,12 @@ kpd_read
 	call	convert_ascii
 	return
 	
-read_columns ; read columns, put result in temp_byte
+read_columns ; read columns, put result in temp_byte and W
 	movlw	0x0F
 	movwf	TRISD, ACCESS
 	call	LCD_delay_x4us
-	movff	PORTD, temp_byte
+	movf	PORTD, W
+	movwf	temp_byte
 	
 read_rows; read columns, add with temp_byte and put in W
 	movlw	0xF0
