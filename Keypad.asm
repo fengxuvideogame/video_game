@@ -22,6 +22,7 @@ kpd_ch_setup
 kpd_read
 	call	read_columns
 	call	convert_ascii
+	return
 	
 read_columns ; read columns, put result in temp_byte
 	movlw	0x0F
