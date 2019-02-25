@@ -34,6 +34,8 @@ high_int_setup ; setup counter interrupt for every beat
 	movwf	c2_max
 	movlw	0x0a		; end of game counter, may be changed
 	movwf	eog_counter
+	clrf	score
+	clrf	full_score
 	return
 	
 timer_interrupt ; interrupt on every beat when brick falls down
@@ -61,8 +63,9 @@ scoring
 	movwf	temp
 	swapf	temp, 1		; swap put in temp
 	movlw	0xF0		; 11110000b
-	andwf	PORTF, 0	; and, put in W
+	andwf	LATH, 0		; and, put in W
 	addwf	temp, 1		; add, put in temp
+	comf	temp, 1		; complement temp
 	movlw	0xF0
 	andwf	temp, 1		; give 0x00 if they match
 	tstfsz	temp		; skip if zero
