@@ -1,5 +1,6 @@
 #include p18f87k22.inc
     
+    global	high_int_setup
     extern	LED_array_update
     extern	read_columns, kpd_ch_setup
     extern	score_display
@@ -15,8 +16,8 @@ temp	    res	1 ; for storing result from read_columns
 
 
 int_hi	code	0x0008		; high vector
-	btfss	INTCON,TMR0IF	; check that this is timer0 interrupt
-	retfie	FAST		; if not then return
+	;btfss	INTCON,TMR0IF	; check that this is timer0 interrupt
+	;retfie	FAST		; if not then return
 	bcf	INTCON,TMR0IF	; clear interrupt flag
 	goto	timer_interrupt ; will not return
 
@@ -31,7 +32,7 @@ high_int_setup ; setup counter interrupt for every beat
 	movlw	0xFF		; counter 2 value, may be changed
 	movwf	counter2
 	movwf	c2_max
-	movlw	0x3c		; end of game counter, may be changed
+	movlw	0x0a		; end of game counter, may be changed
 	movwf	eog_counter
 	return
 	
@@ -73,6 +74,8 @@ scoring
 	
 end_of_game_interrupt
 	clrf	T0CON		; stop timer
+	setf	LATE
+	setf	LATH
         goto	$
 
     END
