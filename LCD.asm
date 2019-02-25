@@ -164,7 +164,6 @@ wlcm_loop
 	movff	TABLAT, POSTINC0; move data from TABLAT to (FSR0), inc FSR0	
 	decfsz	counter		; count down to zero
 	bra	wlcm_loop	; keep going until finished
-		
 	movlw	openScn_l	; output message to LCD (leave out "\n")
 	lfsr	FSR2, myArray
 	call	LCD_Write_Message
