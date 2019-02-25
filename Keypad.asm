@@ -27,9 +27,10 @@ kpd_read
 read_columns ; read columns, put result in temp_byte and W
 	movlw	0x0F
 	movwf	TRISD, ACCESS
-	call	LCD_delay_x4us
+	call	delay_x4us
 	movf	PORTD, W
 	movwf	temp_byte
+	return
 	
 read_rows; read columns, add with temp_byte and put in W
 	movlw	0xF0
