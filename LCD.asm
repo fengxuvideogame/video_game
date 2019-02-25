@@ -14,7 +14,8 @@ LCD_cnt_h   res 1   ; reserve 1 byte for variable LCD_cnt_h
 LCD_cnt_ms  res 1   ; reserve 1 byte for ms counter
 LCD_tmp	    res 1   ; reserve 1 byte for temporary use
 LCD_counter res 1   ; reserve 1 byte for counting through nessage
-scr_save  res	1   ;save the score obtained
+scr_save    res	1   ;save the score obtained
+counter	    res	1
 
 tables	udata	0x400    ; reserve data anywhere in RAM (here at 0x400)
 myArray res 0x80    ; reserve 128 bytes for message data  
@@ -158,10 +159,11 @@ wlcm_display
 	movwf	TBLPTRL		; load low byte to TBLPTRL
 	movlw	openScn_l	; bytes to read
 	movwf 	counter		; our counter register
-loop 	tblrd*+			; one byte from PM to TABLAT, increment TBLPRT
+wlcm_loop
+	tblrd*+			; one byte from PM to TABLAT, increment TBLPRT
 	movff	TABLAT, POSTINC0; move data from TABLAT to (FSR0), inc FSR0	
 	decfsz	counter		; count down to zero
-	bra	loop		; keep going until finished
+	bra	wlcm_loop	; keep going until finished
 		
 	movlw	openScn_l	; output message to LCD (leave out "\n")
 	lfsr	FSR2, myArray
