@@ -35,7 +35,7 @@ SPI_init ; Set Clock edge to negative
     movwf   SSP1CON1
     ; SDO1 output; SCK1 output
     bcf	    TRISC, SCK1 ; RC3, opt
-    bsf	    TRISC, SPI1 ; RC4, ipt
+    bsf	    TRISC, SDI1 ; RC4, ipt
     bcf	    TRISC, SDO1 ; RC5, opt
     bsf	    TRISA, 2	; RA2 / DREQ, ipt
     bcf	    TRISB, 2	; RB2 / XDCS, ipt
@@ -146,7 +146,7 @@ read_sm_cancel ; read sm_cancel in sci_mode, store in W
     
 wait_transmit ; Wait for transmission to complete
     btfss PIR1, SSP1IF
-    bra Wait_Transmit
+    bra wait_transmit
     bcf PIR1, SSP1IF ; clear interrupt flag
     return
     
