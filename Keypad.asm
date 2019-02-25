@@ -34,7 +34,7 @@ read_columns ; read columns, put result in temp_byte and W
 read_rows; read columns, add with temp_byte and put in W
 	movlw	0xF0
 	movwf	TRISD, ACCESS
-	call	LCD_delay_x4us
+	call	delay_x4us
 	movf	PORTD, W
 	addwf	temp_byte, 0
 	return

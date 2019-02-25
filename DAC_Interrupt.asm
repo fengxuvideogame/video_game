@@ -2,7 +2,7 @@
 	
 	global	DAC_Setup
 	
-	extern	LCD_delay_ms
+	extern	delay_ms
 
 acs0	udata_acs
 counter	res 1
@@ -17,7 +17,7 @@ int_hi	code	0x0008	; high vector, no low vector
 	DCFSNZ	counter
 	call	Sine_Setup
 	clrf	LATC
-	call	LCD_delay_ms
+	call	delay_ms
 	movlw	b'00000001'	; Set Write Enable * to HIGH
 	movwf	PORTC
 	bcf	INTCON,TMR0IF	; clear interrupt flag

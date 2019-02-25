@@ -2,13 +2,18 @@
     
     global	delay_ms, delay_x4us, LCD_delay
 
+acs0	    udata_acs   ; reserve data space in access ram
+LCD_cnt_ms  res 1   ; reserve one byte for a counter variable
+LCD_cnt_l   res 1   ; reserve one byte for counter in the delay routine
+LCD_cnt_h   res	1
+   
 Delays    code
-
+ 
 ; ** a few delay routines below here as LCD timing can be quite critical ****
 delay_ms		    ; delay given in ms in W
 	movwf	LCD_cnt_ms
 lcdlp2	movlw	.250	    ; 1 ms delay
-	call	LCD_delay_x4us	
+	call	delay_x4us	
 	decfsz	LCD_cnt_ms
 	bra	lcdlp2
 	return
@@ -31,4 +36,4 @@ lcdlp1	decf 	LCD_cnt_l,F	; no carry when 0x00 -> 0xff
 	bc 	lcdlp1		; carry, then loop again
 	return			; carry reset so return
 
-    END
+        END
