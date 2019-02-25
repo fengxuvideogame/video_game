@@ -1,6 +1,8 @@
 #include p18f87k22.inc
     
-    global	SPI_Mp3Init,SPI_Mp3Transmit
+    global	play_music
+    global	Mp3file
+    
     extern	delay_x4us, delay_ms
 
 acs0	udata_acs
@@ -55,6 +57,7 @@ table_setup
     movlw	0xff		; bytes to read ; TODO: read more bytes
     movwf 	counter		; our counter register
     return
+
 
 send_music
     call    table_setup

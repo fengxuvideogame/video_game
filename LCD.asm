@@ -3,8 +3,10 @@
     global  LCD_setup, LCD_Write_Message, LCD_Send_Byte_I
     global  LCD_Send_Byte_D
     global  LCD_Write_Hex
+    global  score_display,wlcm_display
     
     extern  delay_ms, delay_x4us, LCD_delay
+    extern  Convert_hex_dec
 
 acs0    udata_acs   ; named variables in access ram
 LCD_cnt_l   res 1   ; reserve 1 byte for variable LCD_cnt_l
@@ -12,7 +14,12 @@ LCD_cnt_h   res 1   ; reserve 1 byte for variable LCD_cnt_h
 LCD_cnt_ms  res 1   ; reserve 1 byte for ms counter
 LCD_tmp	    res 1   ; reserve 1 byte for temporary use
 LCD_counter res 1   ; reserve 1 byte for counting through nessage
+scr_save    res	1   ;save the score obtained
+counter	    res	1
 
+tables	udata	0x400    ; reserve data anywhere in RAM (here at 0x400)
+myArray res 0x80    ; reserve 128 bytes for message data  
+  
 acs_ovr	access_ovr
 LCD_hex_tmp res 1   ; reserve 1 byte for variable LCD_hex_tmp	
 
@@ -20,7 +27,14 @@ LCD_hex_tmp res 1   ; reserve 1 byte for variable LCD_hex_tmp
     	constant    LCD_RS=4	; LCD register select bit
 
 LCD	code
-    
+	
+openScn data	    "Welcome!"	; message
+	constant    openScn_l=.8	; length of data
+
+scrScn	data	    "Score:"	;message
+	constant    scrScn_l=.6
+	
+	
 LCD_setup
 	clrf    LATB
 	movlw   b'11000000'	    ; RB0:5 all outputs
@@ -128,6 +142,69 @@ LCD_Enable	    ; pulse enable bit LCD_E for 500ns
 	bcf	    LATB, LCD_E	    ; Writes data to LCD
 	return
 
+clear_display
+	movlw	b'00000001'
+	call	LCD_Send_Byte_I
+	return
+	
+	
+wlcm_display
+	;print"Welcome!"
+	lfsr	FSR0, myArray	; Load FSR0 with address in RAM	
+	movlw	upper(openScn)	; address of data in PM
+	movwf	TBLPTRU		; load upper bits to TBLPTRU
+	movlw	high(openScn)	; address of data in PM
+	movwf	TBLPTRH		; load high byte to TBLPTRH
+	movlw	low(openScn)	; address of data in PM
+	movwf	TBLPTRL		; load low byte to TBLPTRL
+	movlw	openScn_l	; bytes to read
+	movwf 	counter		; our counter register
+wlcm_loop
+	tblrd*+			; one byte from PM to TABLAT, increment TBLPRT
+	movff	TABLAT, POSTINC0; move data from TABLAT to (FSR0), inc FSR0	
+	decfsz	counter		; count down to zero
+	bra	wlcm_loop	; keep going until finished
+	movlw	openScn_l	; output message to LCD (leave out "\n")
+	lfsr	FSR2, myArray
+	call	LCD_Write_Message
+	return
+	
+	
+score_display
+	movwf	scr_save	;save the score
+	call	clear_display	;clear the screen
+	;print"score:"
+	lfsr	FSR0, myArray	; Load FSR0 with address in RAM	
+	movlw	upper(scrScn)	; address of data in PM
+	movwf	TBLPTRU		; load upper bits to TBLPTRU
+	movlw	high(scrScn)	; address of data in PM
+	movwf	TBLPTRH		; load high byte to TBLPTRH
+	movlw	low(scrScn)	; address of data in PM
+	movwf	TBLPTRL		; load low byte to TBLPTRL
+	movlw	scrScn_l	; bytes to read
+	movwf 	counter		; our counter register
+loop 	tblrd*+			; one byte from PM to TABLAT, increment TBLPRT
+	movff	TABLAT, POSTINC0; move data from TABLAT to (FSR0), inc FSR0	
+	decfsz	counter		; count down to zero
+	bra	loop		; keep going until finished
+		
+	movlw	scrScn_l	; output message to LCD
+	lfsr	FSR2, myArray
+	call	LCD_Write_Message
+	call	LCD_delay
+	;print score
+	movlw   0x00
+	movwf   0x3f
+	movf	scr_save,W
+	movwf   0x40
+	call    Convert_hex_dec
+	; display them
+	movf    0x49, W
+	call    LCD_Write_Hex
+	movf    0x4a, W
+	call    LCD_Write_Hex
+	return
+	
 
     end
 
