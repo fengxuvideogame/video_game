@@ -188,13 +188,14 @@ loop 	tblrd*+			; one byte from PM to TABLAT, increment TBLPRT
 	decfsz	counter		; count down to zero
 	bra	loop		; keep going until finished
 		
-	movlw	scrScn_l	; output message to LCD (leave out "\n")
+	movlw	scrScn_l	; output message to LCD
 	lfsr	FSR2, myArray
 	call	LCD_Write_Message
+	call	LCD_delay
 	;print score
 	movlw   0x00
 	movwf   0x3f
-	movf	scr_save
+	movf	scr_save,W
 	movwf   0x40
 	call    Convert_hex_dec
 	; display them
