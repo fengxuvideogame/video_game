@@ -1,7 +1,8 @@
 #include p18f87k22.inc
     
     global	SPI_Mp3Init,SPI_Mp3Transmit
-    extern	LCD_delay_x4us
+    global	Mp3file
+    extern	delay_x4us
 
 acs0	udata_acs
 counter	res 1
@@ -41,7 +42,7 @@ SPI_Mp3Transmit
     clrf    TRISB
     movlw   0x04 ; 00000100b
     movwf   PORTB
-    call    LCD_delay_x4us
+    call    delay_x4us
     clrf    PORTB
     call    transmit_loop
     movlw   0x04
