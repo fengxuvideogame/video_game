@@ -23,8 +23,8 @@ int_hi	code	0x0008		; high vector
 
 Interrupt   code	
 high_int_setup ; setup counter interrupt for every beat
-	movlw	b'10000111'	; Set timer0 to 16-bit, Fosc/4/256
-	movwf	T0CON		; = 62.5KHz clock rate, approx 1sec rollover
+	movlw	b'11000101'	; Set timer0 to 8-bit, presacle factor of 6
+	movwf	T0CON		; 1.024ms interrupt interval
 	bsf	INTCON,TMR0IE	; Enable timer0 interrupt
 	bsf	INTCON,GIE	; Enable all interrupts
 	movlw	0x01		; 425 loops in total for C1 and C2 combined
