@@ -27,24 +27,24 @@ high_int_setup ; setup counter interrupt for every beat
 	movwf	T0CON		; = 62.5KHz clock rate, approx 1sec rollover
 	bsf	INTCON,TMR0IE	; Enable timer0 interrupt
 	bsf	INTCON,GIE	; Enable all interrupts
-	movlw	0xFF
+	movlw	0x01		; 425 loops in total for C1 and C2 combined
 	movwf	counter1
-	movlw	0xFF		; counter 2 value, may be changed
+	movlw	0xA9		; 425d=1A9h
 	movwf	counter2
-	movwf	c2_max
-	movlw	0x0a		; end of game counter, may be changed
+	movwf	c2_max		; maximum value of C2
+	movlw	0x3c		; end of game counter, may be changed
 	movwf	eog_counter
 	clrf	score
 	clrf	full_score
 	return
 	
 timer_interrupt ; interrupt on every beat when brick falls down
-	dcfsnz	counter1	; skip if dec counter1 is not 0
-	retfie	FAST
-	movlw	0xFF		; reset counter 1
+	decfsz	counter1	; decrement C1, skip if 0
+	retfie	FAST		; fast return
+	decfsz	counter2	; decrement C2, skip if 0
+	retfie	FAST		; fast return
+	movlw	0x01		; 425 loops in total for C1 and C2 combined
 	movwf	counter1
-	dcfsnz	counter2	; skip if dec counter2 is not 0
-	retfie	FAST
 	movff	c2_max, counter2; reset counter 2
 	dcfsnz	eog_counter	; if it is the end of game
 	goto	end_of_game_interrupt
