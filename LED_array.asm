@@ -49,7 +49,6 @@ LED_array_update
     return
        
 LED_generate ; generate new pattern on top of LED array
-    ; TODO: implementation
     tblrd*+
     movlw	0x03
     andwf	TABLAT, 0
