@@ -4,6 +4,7 @@
 	extern	LED_array_setup
 	extern	high_int_setup
 	extern	LCD_setup, wlcm_display
+	extern	play_music
 	
 
 rst	code	0    ; reset vector
@@ -12,6 +13,7 @@ rst	code	0    ; reset vector
 main	code
 	; *******  Programme FLASH read Setup Code ***********************
 setup	
+	call	play_music
 	call	LCD_setup
 	call	wlcm_display
 	call	kpd_ch_setup
