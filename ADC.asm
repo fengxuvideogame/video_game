@@ -96,7 +96,7 @@ Test_Mul_16_16
     call    LCD_Write_Hex
     goto    $
   
- Mul_8_24
+Mul_8_24
     movff   0x40, 0x47
     movff   0x3f, 0x40
     call    Mul_8_16
